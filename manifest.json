@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "A simple list of scheduled custom messages, set in advance.",
   "author": "Adam Selby",
-  "repository": "",
+  "repository": "https://github.com/adamselby/fiestaboard-plugin--occasions",
   "documentation": "README.md",
   "icon": "calendar-heart",
   "category": "utility",
