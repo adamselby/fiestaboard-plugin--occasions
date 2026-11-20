@@ -1,0 +1,266 @@
+{
+  "id": "occasions",
+  "name": "Occasions",
+  "version": "1.0.0",
+  "description": "A simple list of scheduled custom messages, set in advance.",
+  "author": "Adam Selby",
+  "repository": "",
+  "documentation": "README.md",
+  "icon": "calendar-heart",
+  "category": "utility",
+  "supports_triggers": true,
+  "min_refresh_seconds": 60,
+  "settings_schema": {
+    "type": "object",
+    "properties": {
+      "enabled": {
+        "type": "boolean",
+        "title": "Enabled",
+        "default": false
+      },
+      "occasions": {
+        "type": "array",
+        "title": "Occasions",
+        "description": "One row per message. Past dates are ignored.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "date": {
+              "type": "string",
+              "title": "Date",
+              "description": "YYYY-MM-DD"
+            },
+            "message": {
+              "type": "string",
+              "title": "Message",
+              "description": "Use | for a line break."
+            },
+            "colors": {
+              "type": "string",
+              "title": "Colors",
+              "description": "Optional confetti colors, comma-separated: red, orange, yellow, green, blue, violet, white"
+            }
+          },
+          "required": [
+            "date",
+            "message"
+          ]
+        },
+        "default": []
+      },
+      "timezone": {
+        "type": "string",
+        "title": "Timezone",
+        "description": "Decides when \"today\" starts and ends.",
+        "default": "America/Chicago",
+        "ui:widget": "timezone"
+      },
+      "lookahead_days": {
+        "type": "integer",
+        "title": "Upcoming Window (days)",
+        "description": "How far ahead the upcoming list looks.",
+        "default": 30,
+        "minimum": 1,
+        "maximum": 366
+      },
+      "announce": {
+        "type": "boolean",
+        "title": "Take Over the Board",
+        "description": "Interrupt your normal pages to show the message, then hand the board back.",
+        "default": false
+      },
+      "announce_mode": {
+        "type": "string",
+        "title": "Takeover Style",
+        "description": "Once a day for a set length, or the first few minutes of every hour.",
+        "enum": [
+          "daily",
+          "hourly"
+        ],
+        "enumNames": [
+          "Once a day",
+          "Start of every hour"
+        ],
+        "default": "daily"
+      },
+      "announce_hour": {
+        "type": "integer",
+        "title": "Start Hour",
+        "description": "0-23, local time. Once a day: when it starts. Every hour: the first hour it runs.",
+        "default": 8,
+        "minimum": 0,
+        "maximum": 23
+      },
+      "announce_end_hour": {
+        "type": "integer",
+        "title": "End Hour (every-hour style)",
+        "description": "0-24. The takeover doesn't start in this hour or later.",
+        "default": 22,
+        "minimum": 1,
+        "maximum": 24
+      },
+      "announce_minutes": {
+        "type": "integer",
+        "title": "Takeover Length (minutes)",
+        "description": "Once a day: up to 1440. Every hour: capped at 60.",
+        "default": 30,
+        "minimum": 1,
+        "maximum": 1440
+      },
+      "takeover_priority": {
+        "type": "integer",
+        "title": "Takeover Priority",
+        "description": "When two takeovers overlap, the higher number wins.",
+        "default": 60,
+        "minimum": 1,
+        "maximum": 99
+      },
+      "refresh_seconds": {
+        "type": "integer",
+        "title": "Refresh Interval (seconds)",
+        "description": "How often to recompute (and reshuffle confetti). The date rolls over within this long of midnight.",
+        "default": 300,
+        "minimum": 60,
+        "maximum": 3600
+      }
+    }
+  },
+  "variables": {
+    "groups": {
+      "today": {
+        "label": "Today"
+      },
+      "next": {
+        "label": "Next Occasion"
+      }
+    },
+    "simple": {
+      "is_occasion": {
+        "description": "\"true\" if a message is scheduled for today",
+        "group": "today",
+        "max_length": 5,
+        "example": "true"
+      },
+      "message": {
+        "description": "Today's message",
+        "group": "today",
+        "max_length": 66,
+        "example": "HAPPY ANNIVERSARY!"
+      },
+      "count": {
+        "description": "Messages today",
+        "group": "today",
+        "max_length": 2,
+        "example": "1",
+        "type": "number"
+      },
+      "confetti": {
+        "description": "22 random color tiles (themed when colors are set), reshuffled every refresh. LEFT(x.confetti, n * 4) gives n tiles.",
+        "group": "today",
+        "max_length": 22,
+        "example": "{63}{64}{65}"
+      },
+      "next_message": {
+        "description": "Next scheduled message",
+        "group": "next",
+        "max_length": 66,
+        "example": "CONGRATS SAM!"
+      },
+      "next_date": {
+        "description": "e.g. DEC 3",
+        "group": "next",
+        "max_length": 6,
+        "example": "DEC 3"
+      },
+      "next_days": {
+        "description": "Days until the next one",
+        "group": "next",
+        "max_length": 3,
+        "example": "14",
+        "type": "number"
+      }
+    },
+    "arrays": {
+      "today": {
+        "label_field": "message",
+        "item_fields": [
+          "message"
+        ]
+      },
+      "upcoming": {
+        "label_field": "message",
+        "item_fields": [
+          "message",
+          "date",
+          "days"
+        ]
+      }
+    }
+  },
+  "max_lengths": {
+    "today.*.message": 66,
+    "upcoming.*.message": 66,
+    "upcoming.*.date": 6,
+    "upcoming.*.days": 3
+  },
+  "demo": {
+    "name": "Occasions Demo",
+    "device_type": "flagship",
+    "template": [
+      "",
+      "{{occasions.message}}",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "line_metadata": [
+      {
+        "alignment": "center",
+        "wrap": false
+      },
+      {
+        "alignment": "center",
+        "wrap": false
+      },
+      {
+        "alignment": "center",
+        "wrap": false
+      },
+      {
+        "alignment": "center",
+        "wrap": false
+      },
+      {
+        "alignment": "center",
+        "wrap": false
+      },
+      {
+        "alignment": "center",
+        "wrap": false
+      }
+    ]
+  },
+  "teaser": "WELCOME HOME!",
+  "previews": [
+    {
+      "device_type": "flagship",
+      "rows": [
+        "{67}{69}{67}{69}{67}{69}{67}{69}{67}{69}{67}{69}{67}{69}{67}{69}{67}{69}{67}{69}{67}{69}",
+        "",
+        "     WELCOME HOME",
+        "       GRANDMA!",
+        "",
+        "{69}{67}{69}{67}{69}{67}{69}{67}{69}{67}{69}{67}{69}{67}{69}{67}{69}{67}{69}{67}{69}{67}"
+      ]
+    },
+    {
+      "device_type": "note",
+      "rows": [
+        "{67}{69}{67}{69}{67}{69}{67}{69}{67}{69}{67}{69}{67}{69}{67}",
+        " WELCOME HOME",
+        "   GRANDMA!"
+      ]
+    }
+  ]
+}
